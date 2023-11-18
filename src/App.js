@@ -1,3 +1,4 @@
+// App.js
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import UserDirectory from './UserDirectory';
@@ -7,8 +8,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" exact element={<UserDirectory/>} />
-        <Route path="/user/" element={<UserProfile/>} />
+        <Route path="/" element={<UserDirectory />} />
+        <Route path="/user/:userId/*" element={<UserProfile />} />
       </Routes>
     </Router>
   );
