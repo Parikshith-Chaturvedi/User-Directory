@@ -24,11 +24,7 @@ import PauseIcon from "@mui/icons-material/Pause";
 
 const PostModal = ({ isOpen, handleClose, post }) => {
   return (
-    <Modal
-      open={isOpen}
-      onClose={handleClose}
-      closeAfterTransition
-    >
+    <Modal open={isOpen} onClose={handleClose} closeAfterTransition>
       <Fade in={isOpen}>
         <div
           style={{
@@ -52,7 +48,7 @@ const PostModal = ({ isOpen, handleClose, post }) => {
 const UserProfile = () => {
   const { userId } = useParams();
   const [userData, setUserData] = useState(null);
-  const [selectedCountry, setSelectedCountry] = useState("America/New_York");
+  const [selectedCountry, setSelectedCountry] = useState("Asia/Kolkata");
   const [userPosts, setUserPosts] = useState([]);
   const [currentTime, setCurrentTime] = useState("");
   const [countries, setCountries] = useState([]);
@@ -83,7 +79,7 @@ const UserProfile = () => {
     };
 
     fetchCountries();
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     let interval;
@@ -94,11 +90,21 @@ const UserProfile = () => {
           `http://worldtimeapi.org/api/timezone/${selectedCountry}`
         );
         const data = await response.json();
-        setCurrentTime(data.utc_datetime);
+
+        const offsetString = data.utc_offset;
+        const [hours, minutes] = offsetString.split(":").map(Number);
+        const offsetMilliseconds = (hours * 60 + minutes) * 60 * 1000;
+
+        const currentUtcTime = new Date().getTime();
+        const adjustedTime = new Date(currentUtcTime + offsetMilliseconds);
+
+        setCurrentTime(adjustedTime.toISOString());
       } catch (error) {
         console.error("Error fetching time:", error);
       }
     };
+
+    fetchTime();
 
     const startClock = () => {
       interval = setInterval(fetchTime, 1000);
@@ -118,7 +124,7 @@ const UserProfile = () => {
     return () => {
       pauseClock();
     };
-  }, [isClockPaused, pausedTime, selectedCountry]);
+  }, [isClockPaused, pausedTime, selectedCountry, userId, currentTime]);
 
   const toggleClock = () => {
     setClockPaused((prevPaused) => !prevPaused);
@@ -157,7 +163,7 @@ const UserProfile = () => {
             justifyContent="center"
             alignItems="center"
           >
-            <Grid item xs={3}>
+            <Grid item xs={12} md={3}>
               <IconButton
                 component={RouterLink}
                 to="/"
@@ -167,7 +173,7 @@ const UserProfile = () => {
                 <ArrowBackIcon />
               </IconButton>
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={12} md={3}>
               <Select
                 value={selectedCountry}
                 onChange={handleCountryChange}
@@ -181,10 +187,16 @@ const UserProfile = () => {
                 ))}
               </Select>
             </Grid>
-            <Grid item xs={3}>
-              {formatTime(currentTime)}
+            <Grid item xs={12} md={3}>
+              <Typography
+                // variant="body1"
+                sx={{ display: "flex", mb: 1, letterSpacing: "4px" }}
+                className={isClockPaused ? "glow" : "date"}
+              >
+                {formatTime(currentTime)}
+              </Typography>
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={12} md={3}>
               <IconButton onClick={toggleClock} color="primary">
                 {isClockPaused ? <PlayArrowIcon /> : <PauseIcon />}
               </IconButton>
@@ -260,7 +272,7 @@ const UserProfile = () => {
                       "&:hover, &:focus": {
                         backgroundColor: "#e8ffec",
                         border: "1px solid #78ff88",
-                        cursor: 'pointer'
+                        cursor: "pointer",
                       },
                     }}
                     onClick={() => handlePostClick(post)}
