@@ -2,4 +2,4 @@
 
 # clone the repo
 # Run npm i
-# open http://localhost:3001
+# open http://localhost:3000
