@@ -27,7 +27,6 @@ const UserDirectory = () => {
               .then((response) => response.json())
               .then((posts) => ({ ...user, postsCount: posts.length }))
           );
-
           return Promise.all(usersWithPostsPromise);
         })
         .then((usersWithPosts) => {
@@ -43,13 +42,24 @@ const UserDirectory = () => {
     return () => clearTimeout(delay);
   }, []);
   return (
-    <Container maxWidth="md" style={{ paddingTop: "20px" }}>
+    <Container
+      maxWidth="md"
+      style={{
+        paddingTop: "20px",
+      }}
+    >
       <Box textAlign="center" mb={3}>
         <Typography variant="h4" gutterBottom>
           Directory
         </Typography>
       </Box>
-      <Grid container spacing={2}>
+      <Grid container spacing={2}  style={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        height: "100vh",
+        justifyContent: "center",
+      }}> 
         {loading ? (
           <CircularProgress />
         ) : (
@@ -84,10 +94,10 @@ const UserDirectory = () => {
                       justifyContent: "space-between",
                     }}
                   >
-                    <Typography variant="subtitle1" component="div">
+                    <Typography variant="subtitle2" component="div">
                       {user.name}
                     </Typography>
-                    <Typography color="textSecondary" align="right">
+                    <Typography color="textSecondary" variant="body2" align="right">
                       Posts: {user.postsCount || 0}
                     </Typography>
                   </CardContent>
